@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "org.tenseventyseven.acer-wmi-ext",
-  "name": "Acer WMI Ext",
+  "name": "Acer WMI Ext for Omarchy",
   "version": "0.1.0",
-  "author": "TenSeventy7",
+  "author": "yudopr",
   "description": "Control Acer WMI fan profiles, battery health, calibration, and USB charging",
   "kinds": [
     "bar-widget"

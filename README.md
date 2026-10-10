@@ -1,6 +1,6 @@
 # Acer WMI Ext for Omarchy
 
-A bar widget for controlling features exposed by the experimental [`acer-wmi-ext`](https://github.com/TenSeventy7/acer-wmi-ext) kernel driver:
+An Omarchy bar plugin by **yudopr**, based on the experimental [`acer-wmi-ext`](https://github.com/TenSeventy7/acer-wmi-ext) kernel driver by TenSeventy7:
 
 - **Fan profile:** Quiet, Balanced, or Performance through Omarchy's power-profile tooling.
 - **Battery health:** Toggle the driver's 80% charge limit.

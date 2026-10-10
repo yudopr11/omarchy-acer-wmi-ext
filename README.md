@@ -19,10 +19,10 @@ The widget only displays controls that the driver reports as available. Fan and 
 
 ## Install
 
-After you publish this folder to a Git remote, install it with Omarchy:
+Install the published plugin with Omarchy:
 
 ```sh
-omarchy plugin add <plugin-git-url>
+omarchy plugin add https://github.com/yudopr11/omarchy-acer-wmi-ext.git
 omarchy plugin enable org.tenseventyseven.acer-wmi-ext right
 ```
 
@@ -45,11 +45,15 @@ If the widget reports that `acer-wmi-ext` is not loaded, run this optional insta
 
 The script fetches upstream commit `78aaf9392e1fbdd62c3ec9944e9615505485ec04`, builds it against the running kernel's headers, asks before loading it with `sudo`, and removes its temporary build files afterward. It does **not** install the module or configure it to load at boot; run it again after reboot. If Secure Boot blocks the unsigned module, the script stops and reports the load failure rather than changing Secure Boot settings. Review `scripts/install-driver.sh` before running it.
 
-For a local checkout, copy the plugin folder to `~/.config/omarchy/plugins/org.tenseventyseven.acer-wmi-ext/`, then run the enable command above. Validate a checkout before installing it:
+For a local checkout, run these commands from the repository root. This copies the plugin files (without its `.git` metadata) into Omarchy's plugin directory:
 
 ```sh
+plugin="$HOME/.config/omarchy/plugins/org.tenseventyseven.acer-wmi-ext"
+mkdir -p "$plugin"
+cp -a LICENSE Model.js Panel.qml README.md manifest.json polkit scripts tests "$plugin/"
+cd "$plugin"
 omarchy plugin validate .
-node tests/model.test.js
+omarchy plugin enable org.tenseventyseven.acer-wmi-ext right
 ```
 
 ## Calibration warning

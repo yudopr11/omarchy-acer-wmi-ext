@@ -22,8 +22,7 @@ The widget only displays controls that the driver reports as available. Fan and 
 Install the published plugin with Omarchy:
 
 ```sh
-omarchy plugin add https://github.com/yudopr11/omarchy-acer-wmi-ext.git
-omarchy plugin enable org.tenseventyseven.acer-wmi-ext right
+omarchy plugin add https://github.com/yudopr11/omarchy-acer-wmi-ext.git --enable
 ```
 
 Then, from the installed plugin directory, install its narrow privileged helper and polkit action:

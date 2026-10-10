@@ -4,7 +4,7 @@
   "name": "Acer WMI Ext for Omarchy",
   "version": "0.1.0",
   "author": "yudopr",
-  "description": "Control Acer WMI fan profiles, battery health, calibration, and USB charging",
+  "description": "Control supported Acer fan profiles, battery health, calibration, and USB charging from Omarchy.",
   "kinds": [
     "bar-widget"
   ],
@@ -13,7 +13,7 @@
   },
   "barWidget": {
     "displayName": "Acer",
-    "description": "Fan and battery controls for acer-wmi-ext",
+    "description": "Fan, battery, and USB controls for supported Acer hardware",
     "category": "Hardware",
     "allowMultiple": false,
     "defaultSection": "right"

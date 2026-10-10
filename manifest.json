@@ -4,7 +4,7 @@
   "name": "Acer WMI Ext for Omarchy",
   "version": "0.1.0",
   "author": "yudopr",
-  "description": "Control supported Acer fan profiles, battery health, calibration, and USB charging from Omarchy.",
+  "description": "Manage supported Acer fan, battery, and USB features. Driver detection verified on Acer Swift Go 14 (SFG14-73).",
   "kinds": [
     "bar-widget"
   ],
@@ -13,7 +13,7 @@
   },
   "barWidget": {
     "displayName": "Acer",
-    "description": "Fan, battery, and USB controls for supported Acer hardware",
+    "description": "Fan, battery, and USB controls; driver detected on Acer Swift Go 14 (SFG14-73)",
     "category": "Hardware",
     "allowMultiple": false,
     "defaultSection": "right"

@@ -60,7 +60,7 @@ Connect AC power before starting calibration. The driver charges the battery to 
 
 - Fan profiles are selected through `omarchy-powerprofiles-set autodetect <profile>`, keeping power-profiles-daemon state in sync with the driver. This widget does not write `system_control_mode` directly.
 - USB limit options are shown only while USB charging is enabled. The driver accepts only 10, 20, and 30 percent.
-- Hardware behavior has not been tested by this plugin on a physical Acer laptop. Use the upstream driver's guidance and verify support for your specific model.
+- On Acer Swift Go 14 (SFG14-73), the driver is detected and reports supported controls. Actual fan, battery, calibration, and USB behavior has not been exercised in this session; verify it on your device and follow the upstream driver's guidance.
 - Removing the plugin does not remove the system helper or polkit policy. To remove those separately, run `sudo rm /usr/local/bin/acer-wmi-ext-omarchy /usr/share/polkit-1/actions/org.acer-wmi-ext.omarchy.policy`.
 
 ## License

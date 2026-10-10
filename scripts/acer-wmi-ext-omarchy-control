@@ -1,0 +1,153 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+readonly SYSFS_DIR="/sys/bus/wmi/drivers/acer-wmi-ext"
+
+usage() {
+  cat >&2 <<'EOF'
+Usage:
+  acer-wmi-ext-omarchy status
+  acer-wmi-ext-omarchy set health-mode 0|1
+  acer-wmi-ext-omarchy set calibration-mode 0|1
+  acer-wmi-ext-omarchy set usb-charge-mode 0|1
+  acer-wmi-ext-omarchy set usb-charge-limit 10|20|30
+EOF
+  exit 2
+}
+
+read_attribute() {
+  local attribute="$1"
+  local path="$SYSFS_DIR/$attribute"
+  local value
+
+  if [[ ! -r "$path" ]] || ! value=$(cat -- "$path" 2>/dev/null); then
+    printf '%s\n' "-2"
+    return 0
+  fi
+
+  value="${value//$'\n'/}"
+  if [[ "$value" =~ ^-?[0-9]+$ ]]; then
+    printf '%s\n' "$value"
+  else
+    printf '%s\n' "-2"
+  fi
+}
+
+usb_charge_supported() {
+  local value
+  local path="$SYSFS_DIR/usb_charge_limit"
+
+  [[ -r "$path" ]] && value=$(cat -- "$path" 2>/dev/null) || return 1
+  [[ "$value" =~ ^-?[0-9]+$ ]]
+}
+
+status() {
+  if [[ ! -d "$SYSFS_DIR" ]]; then
+    printf 'driver_present=0\n'
+    return 0
+  fi
+
+  printf 'driver_present=1\n'
+  printf 'health_mode=%s\n' "$(read_attribute health_mode)"
+  printf 'calibration_mode=%s\n' "$(read_attribute calibration_mode)"
+  printf 'system_control_mode=%s\n' "$(read_attribute system_control_mode)"
+  printf 'usb_charge_mode=%s\n' "$(read_attribute usb_charge_mode)"
+  printf 'usb_charge_limit=%s\n' "$(read_attribute usb_charge_limit)"
+
+  if usb_charge_supported; then
+    printf 'usb_charge_supported=1\n'
+  else
+    printf 'usb_charge_supported=0\n'
+  fi
+}
+
+write_attribute() {
+  local attribute="$1"
+  local value="$2"
+  local path="$SYSFS_DIR/$attribute"
+
+  if [[ ! -e "$path" ]]; then
+    printf 'acer-wmi-ext attribute is not available: %s\n' "$attribute" >&2
+    return 1
+  fi
+  if ! printf '%s\n' "$value" >"$path"; then
+    printf 'Failed to write acer-wmi-ext attribute: %s\n' "$attribute" >&2
+    return 1
+  fi
+}
+
+set_value() {
+  local operation="$1"
+  local value="$2"
+  local attribute
+
+  if (( EUID != 0 )); then
+    printf 'This operation must be run through pkexec.\n' >&2
+    return 1
+  fi
+  if [[ ! -d "$SYSFS_DIR" ]]; then
+    printf 'acer-wmi-ext is not loaded (%s is missing).\n' "$SYSFS_DIR" >&2
+    return 1
+  fi
+
+  case "$operation:$value" in
+    health-mode:0|health-mode:1)
+      attribute="health_mode"
+      local calibration_state
+      calibration_state="$(read_attribute calibration_mode)"
+      if [[ "$calibration_state" == "1" ]]; then
+        printf 'Battery health mode cannot be changed during calibration.\n' >&2
+        return 1
+      fi
+      if [[ "$calibration_state" == "-2" ]]; then
+        printf 'Cannot verify battery calibration state; refusing to change health mode.\n' >&2
+        return 1
+      fi
+      ;;
+    calibration-mode:0|calibration-mode:1)
+      attribute="calibration_mode"
+      ;;
+    usb-charge-mode:0|usb-charge-mode:1)
+      attribute="usb_charge_mode"
+      if ! usb_charge_supported; then
+        printf 'acer-wmi-ext USB charging is not supported on this laptop.\n' >&2
+        return 1
+      fi
+      ;;
+    usb-charge-limit:10|usb-charge-limit:20|usb-charge-limit:30)
+      attribute="usb_charge_limit"
+      if ! usb_charge_supported; then
+        printf 'acer-wmi-ext USB charging is not supported on this laptop.\n' >&2
+        return 1
+      fi
+      if [[ "$(read_attribute usb_charge_mode)" != "1" ]]; then
+        printf 'Enable USB charging before setting its charge limit.\n' >&2
+        return 1
+      fi
+      ;;
+    *)
+      usage
+      ;;
+  esac
+
+  if [[ "$(read_attribute "$attribute")" == "-1" || "$(read_attribute "$attribute")" == "-2" ]]; then
+    printf 'acer-wmi-ext does not report %s as supported.\n' "$attribute" >&2
+    return 1
+  fi
+
+  write_attribute "$attribute" "$value"
+}
+
+case "${1:-}" in
+  status)
+    (( $# == 1 )) || usage
+    status
+    ;;
+  set)
+    (( $# == 3 )) || usage
+    set_value "$2" "$3"
+    ;;
+  *)
+    usage
+    ;;
+esac

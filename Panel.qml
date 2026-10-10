@@ -369,7 +369,7 @@ Panel {
 
           Text {
             visible: root.helperReady && !root.driverPresent
-            text: "acer-wmi-ext is not loaded. Install and load the kernel driver first."
+            text: "acer-wmi-ext is not loaded. From a terminal in the plugin folder, run ./scripts/install-driver.sh to build and load it for this boot."
             color: Color.urgent
             font.family: root.fontFamily
             font.pixelSize: Style.font.bodySmall

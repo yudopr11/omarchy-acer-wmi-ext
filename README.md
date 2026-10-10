@@ -12,7 +12,8 @@ The widget only displays controls that the driver reports as available. Fan and 
 ## Requirements
 
 - Omarchy shell with third-party plugin support.
-- The `acer-wmi-ext` kernel module installed and loaded.
+- The `acer-wmi-ext` kernel module loaded. To build and load it for the current boot, use the optional driver installer below.
+- `git`, `make`, `sudo`, a C toolchain, and headers matching the running kernel for the optional driver installer. On Omarchy, install the header package matching the running kernel (for example, `linux-omarchy-headers`).
 - `power-profiles-daemon` and Omarchy's `omarchy-powerprofiles-*` commands for fan-profile switching.
 - `pkexec`, polkit, and an active Omarchy polkit authentication agent for battery and USB changes.
 
@@ -33,6 +34,16 @@ cd ~/.config/omarchy/plugins/org.tenseventyseven.acer-wmi-ext
 ```
 
 The helper install is a separate, explicit step. Review `scripts/acer-wmi-ext-omarchy-control` and `polkit/org.acer-wmi-ext.omarchy.policy` before running it. The script installs a root-owned helper at `/usr/local/bin/acer-wmi-ext-omarchy` and a polkit action under `/usr/share/polkit-1/actions/`. The plugin uses this helper only for the whitelisted battery and USB sysfs operations; it does not run `sudo` itself. Fan profiles use Omarchy's power-profile command and do not require this helper.
+
+### Load the kernel driver
+
+If the widget reports that `acer-wmi-ext` is not loaded, run this optional installer from an interactive terminal in the plugin directory:
+
+```sh
+./scripts/install-driver.sh
+```
+
+The script fetches upstream commit `78aaf9392e1fbdd62c3ec9944e9615505485ec04`, builds it against the running kernel's headers, asks before loading it with `sudo`, and removes its temporary build files afterward. It does **not** install the module or configure it to load at boot; run it again after reboot. If Secure Boot blocks the unsigned module, the script stops and reports the load failure rather than changing Secure Boot settings. Review `scripts/install-driver.sh` before running it.
 
 For a local checkout, copy the plugin folder to `~/.config/omarchy/plugins/org.tenseventyseven.acer-wmi-ext/`, then run the enable command above. Validate a checkout before installing it:
 

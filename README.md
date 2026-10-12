@@ -7,6 +7,8 @@ An Omarchy bar plugin by **yudopr**, based on the experimental [`acer-wmi-ext`](
 - **Battery calibration:** Start or stop a calibration cycle. Starting requires confirmation.
 - **USB charging:** Enable or disable charging and select a 10%, 20%, or 30% limit when the laptop and driver support it.
 
+![The Acer WMI Ext panel open in the Omarchy bar: fan profile, battery health, battery calibration, and USB charging controls](docs/ui.png)
+
 The widget only displays controls that the driver reports as available. Fan and USB controls are hardware-specific; the upstream driver currently documents the Acer Swift Go 14 (SFG14-73). Battery controls depend on WMI support in the laptop. This plugin cannot add hardware support that the kernel driver does not provide.
 
 ## Requirements
@@ -49,7 +51,7 @@ For a local checkout, run these commands from the repository root. This copies t
 ```sh
 plugin="$HOME/.config/omarchy/plugins/org.tenseventyseven.acer-wmi-ext"
 mkdir -p "$plugin"
-cp -a LICENSE Model.js Panel.qml README.md manifest.json polkit scripts tests "$plugin/"
+cp -a LICENSE Model.js Panel.qml README.md manifest.json docs polkit scripts tests "$plugin/"
 cd "$plugin"
 omarchy plugin validate .
 omarchy plugin enable org.tenseventyseven.acer-wmi-ext right

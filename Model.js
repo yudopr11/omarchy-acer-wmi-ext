@@ -69,12 +69,23 @@ function fanModeLabel(mode) {
   return "Unavailable"
 }
 
+function driverInstallerCommand(pluginDirectory) {
+  return [
+    "xdg-terminal-exec",
+    "--hold",
+    "--dir=" + pluginDirectory,
+    "--",
+    "./scripts/install-driver.sh"
+  ]
+}
+
 if (typeof module !== "undefined") {
   module.exports = {
     parseStatus: parseStatus,
     parseProfiles: parseProfiles,
     isSupported: isSupported,
     profileLabel: profileLabel,
-    fanModeLabel: fanModeLabel
+    fanModeLabel: fanModeLabel,
+    driverInstallerCommand: driverInstallerCommand
   }
 }

@@ -34,4 +34,13 @@ assert.equal(Model.profileLabel("power-saver"), "Quiet")
 assert.equal(Model.fanModeLabel(3), "Performance")
 assert.equal(Model.fanModeLabel(-1), "Unavailable")
 
+assert.equal(typeof Model.driverInstallerCommand, "function")
+assert.deepEqual(Model.driverInstallerCommand("/plugin folder"), [
+  "xdg-terminal-exec",
+  "--hold",
+  "--dir=/plugin folder",
+  "--",
+  "./scripts/install-driver.sh"
+])
+
 console.log("Model tests passed")

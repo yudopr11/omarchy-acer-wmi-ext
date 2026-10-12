@@ -32,7 +32,11 @@ Panel {
   readonly property string fontFamily: bar ? bar.fontFamily : Style.font.family
   readonly property var actions: buildActions()
   readonly property var profileActions: actionsFor("profile")
+  readonly property var driverActions: actionsFor("driver")
   readonly property var healthActions: actionsFor("health")
+  readonly property string pluginDirectory: decodeURIComponent(
+    Qt.resolvedUrl(".").toString().replace(/^file:\/\//, "")
+  )
   readonly property var calibrationActions: actionsFor("calibration")
   readonly property var usbActions: actionsFor("usb")
   readonly property var usbLimitActions: actionsFor("usb-limit")
@@ -61,6 +65,15 @@ Panel {
 
   function buildActions() {
     var result = []
+
+    if (helperReady && !driverPresent) {
+      result.push({
+        id: "driver:load",
+        kind: "driver",
+        label: "Load driver",
+        active: false
+      })
+    }
 
     if (driverPresent && systemControlMode >= 1 && systemControlMode <= 3) {
       for (var i = 0; i < profiles.length; i++) {
@@ -144,6 +157,13 @@ Panel {
   function performAction(action) {
     if (!action || action.enabled === false) return
     lastError = ""
+
+    if (action.kind === "driver") {
+      if (driverPresent || !helperReady || driverInstallerProc.running) return
+      driverInstallerProc.command = Model.driverInstallerCommand(pluginDirectory)
+      driverInstallerProc.running = true
+      return
+    }
 
     if (action.kind === "profile") {
       if (profileSetProc.running) return
@@ -285,6 +305,11 @@ Panel {
     onExited: function(exitCode) { root.finishPrivilegedAction(exitCode) }
   }
 
+  Process {
+    id: driverInstallerProc
+    onExited: function(exitCode) { root.refresh() }
+  }
+
   Timer {
     interval: 5000
     running: root.opened
@@ -369,12 +394,29 @@ Panel {
 
           Text {
             visible: root.helperReady && !root.driverPresent
-            text: "acer-wmi-ext is not loaded. From a terminal in the plugin folder, run ./scripts/install-driver.sh to build and load it for this boot."
+            text: "acer-wmi-ext is not loaded. Open a terminal to build and load it for this boot?"
             color: Color.urgent
             font.family: root.fontFamily
             font.pixelSize: Style.font.bodySmall
             wrapMode: Text.Wrap
             width: parent.width
+          }
+
+          Button {
+            visible: root.driverActions.length > 0
+            width: parent.width
+            text: "Load driver"
+            foreground: root.foreground
+            fontFamily: root.fontFamily
+            hasCursor: root.cursorActive && root.cursorIndex === root.actionIndex("driver:load")
+            enabled: !driverInstallerProc.running
+            onClicked: root.performAction(root.driverActions[0])
+            onHovered: function(isHovered) {
+              if (isHovered) {
+                root.cursorActive = true
+                root.cursorIndex = root.actionIndex("driver:load")
+              }
+            }
           }
 
           Text {

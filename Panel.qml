@@ -257,7 +257,7 @@ Panel {
     }
   }
 
-  implicitWidth: markSize + Style.space(4)
+  implicitWidth: markSize + Style.space(12)
   implicitHeight: button.implicitHeight
 
   IpcHandler {

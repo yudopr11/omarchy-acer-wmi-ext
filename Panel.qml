@@ -32,6 +32,7 @@ Panel {
   readonly property color dimForeground: Qt.darker(foreground, 1.5)
   readonly property string fontFamily: bar ? bar.fontFamily : Style.font.family
   readonly property real markSize: Math.max(12, Math.round(Style.bar.iconSlot * 0.56))
+  readonly property real openPanelIndicatorWidth: markSize
   readonly property color markColor: bar ? bar.barForeground : Color.foreground
   readonly property real markOpacity: Model.driverIconOpacity(driverPresent)
   readonly property var actions: buildActions()
@@ -330,6 +331,8 @@ Panel {
     anchors.fill: parent
     bar: root.bar
     text: ""
+    keepSpace: true
+    hasVisualContent: true
     active: false
     useActiveColor: false
     tooltipText: "Acer WMI controls"

@@ -55,6 +55,10 @@ function isSupported(value) {
   return value === 0 || value === 1
 }
 
+function driverIconOpacity(driverPresent) {
+  return driverPresent ? 1 : 0.45
+}
+
 function profileLabel(name) {
   if (name === "power-saver") return "Quiet"
   if (name === "balanced") return "Balanced"
@@ -84,6 +88,7 @@ if (typeof module !== "undefined") {
     parseStatus: parseStatus,
     parseProfiles: parseProfiles,
     isSupported: isSupported,
+    driverIconOpacity: driverIconOpacity,
     profileLabel: profileLabel,
     fanModeLabel: fanModeLabel,
     driverInstallerCommand: driverInstallerCommand

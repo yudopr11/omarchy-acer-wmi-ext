@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import qs.Commons
@@ -30,6 +31,9 @@ Panel {
   readonly property color foreground: bar ? bar.foreground : Color.foreground
   readonly property color dimForeground: Qt.darker(foreground, 1.5)
   readonly property string fontFamily: bar ? bar.fontFamily : Style.font.family
+  readonly property real markSize: Math.max(12, Math.round(Style.bar.iconSlot * 0.56))
+  readonly property color markColor: bar ? bar.barForeground : Color.foreground
+  readonly property real markOpacity: Model.driverIconOpacity(driverPresent)
   readonly property var actions: buildActions()
   readonly property var profileActions: actionsFor("profile")
   readonly property var driverActions: actionsFor("driver")
@@ -252,7 +256,7 @@ Panel {
     }
   }
 
-  implicitWidth: button.implicitWidth
+  implicitWidth: markSize + Style.space(4)
   implicitHeight: button.implicitHeight
 
   IpcHandler {
@@ -312,21 +316,51 @@ Panel {
 
   Timer {
     interval: 5000
-    running: root.opened
+    running: true
     repeat: true
-    onTriggered: root.refresh()
+    triggeredOnStart: true
+    onTriggered: {
+      if (root.opened) root.refresh()
+      else if (!statusProc.running) statusProc.running = true
+    }
   }
 
   BarIconButton {
     id: button
     anchors.fill: parent
     bar: root.bar
-    text: "A"
-    active: root.opened
+    text: ""
+    active: false
+    useActiveColor: false
     tooltipText: "Acer WMI controls"
     onPressed: function(mouseButton) {
       if (mouseButton === Qt.RightButton) root.refresh()
       else root.toggle()
+    }
+  }
+
+  Item {
+    id: mark
+    anchors.centerIn: parent
+    width: root.markSize
+    height: root.markSize
+    opacity: root.markOpacity
+
+    Image {
+      id: markImage
+      anchors.fill: parent
+      visible: false
+      source: Qt.resolvedUrl("assets/acer-wmi-ext.svg")
+      sourceSize: Qt.size(Math.round(width * 2), Math.round(height * 2))
+      fillMode: Image.PreserveAspectFit
+      smooth: true
+    }
+
+    MultiEffect {
+      anchors.fill: markImage
+      source: markImage
+      colorization: 1.0
+      colorizationColor: root.markColor
     }
   }
 

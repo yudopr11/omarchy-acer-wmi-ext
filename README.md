@@ -51,7 +51,7 @@ For a local checkout, run these commands from the repository root. This copies t
 ```sh
 plugin="$HOME/.config/omarchy/plugins/org.tenseventyseven.acer-wmi-ext"
 mkdir -p "$plugin"
-cp -a LICENSE Model.js Panel.qml README.md manifest.json docs polkit scripts tests "$plugin/"
+cp -a LICENSE Model.js Panel.qml README.md manifest.json assets docs polkit scripts tests "$plugin/"
 cd "$plugin"
 omarchy plugin validate .
 omarchy plugin enable org.tenseventyseven.acer-wmi-ext right

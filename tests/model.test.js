@@ -12,6 +12,7 @@ const status = Model.parseStatus([
 ].join("\n"))
 
 assert.equal(status.driverPresent, true)
+assert.equal(Model.driverIconOpacity(status.driverPresent), 1)
 assert.equal(status.healthMode, 1)
 assert.equal(status.calibrationMode, 0)
 assert.equal(status.systemControlMode, 2)
@@ -21,6 +22,7 @@ assert.equal(status.usbChargeSupported, true)
 
 const unavailable = Model.parseStatus("driver_present=0\nhealth_mode=-1\n")
 assert.equal(unavailable.driverPresent, false)
+assert.equal(Model.driverIconOpacity(unavailable.driverPresent), 0.45)
 assert.equal(unavailable.healthMode, -1)
 assert.equal(unavailable.calibrationMode, -2)
 assert.equal(Model.isSupported(0), true)
